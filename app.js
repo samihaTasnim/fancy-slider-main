@@ -1,3 +1,8 @@
+// for bonus points, 
+// 1. added a spinner that is visible only when data from the api is being loaded
+// 2. added a show info button on top of every image that shows a alert corresponding the tags of that image
+
+
 const imagesArea = document.querySelector('.images');
 const gallery = document.querySelector('.gallery');
 const galleryHeader = document.querySelector('.gallery-header');
@@ -11,8 +16,7 @@ let sliders = [];
 // If this key doesn't work
 // Find the name in the url and go to their website
 // to create your own api key
-const KEY = '15674931-a9d714b6e9d654524df198e00&q';
-// '20272401-4f42792b4e928128ef34b4189'
+const KEY ='15674931-a9d714b6e9d654524df198e00&q';
 
 // show spinner until data is loaded
 const showSpinner = (show) => document.getElementById("spinner").classList.toggle("d-none")
@@ -138,8 +142,6 @@ sliderBtn.addEventListener('click', function () {
     document.getElementById("duration").value = ''
   }
   else {
-    const countOfPictures = sliders.length
-    alert(`You selected ${countOfPictures} pictures.`)  
     createSlider()
   }
 })
