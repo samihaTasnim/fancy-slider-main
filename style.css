@@ -64,3 +64,9 @@ img {
     width: 90%;
   }
 }
+
+.hover-btn {
+  position: absolute;
+  top: 8px;
+  right: 20px;
+}

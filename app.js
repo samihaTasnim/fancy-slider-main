@@ -12,18 +12,10 @@ let sliders = [];
 // Find the name in the url and go to their website
 // to create your own api key
 const KEY = '15674931-a9d714b6e9d654524df198e00&q';
+// '20272401-4f42792b4e928128ef34b4189'
 
 // show spinner until data is loaded
-const showSpinner = (show) => {
-  if(show) {
-    document.getElementById("spinner").classList.remove("d-none");
-    console.log("spinner should show now");
-  }
-  else {
-    document.getElementById("spinner").classList.add("d-none");
-    console.log("stoped");
-  }
-}
+const showSpinner = (show) => document.getElementById("spinner").classList.toggle("d-none")
 
 // show images 
 const showImages = (images) => {
@@ -32,9 +24,11 @@ const showImages = (images) => {
   // show gallery title
   galleryHeader.style.display = 'flex';
   images.forEach(image => {
+    let tags = image.tags
     let div = document.createElement('div');
     div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
-    div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
+    div.innerHTML = `<img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">
+    <button class="hover-btn btn-danger btn" onclick="alert('About this image: ${tags}')">Show info</button>` 
     gallery.appendChild(div)
   })
   showSpinner(false);
@@ -43,13 +37,13 @@ const showImages = (images) => {
 const getImages = (query) => {
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
-    .then(data => console.log(data.hits))
+    .then(data => showImages(data.hits))
     .catch(err => console.log(err))
 }
 
 // enter key acting as search-btn
-document.getElementById("search").addEventListener("keypress", function(e) {
-  if(e.key === "Enter") {
+document.getElementById("search").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
     searchBtn.click()
   }
 })
@@ -58,11 +52,13 @@ let slideIndex = 0;
 const selectItem = (event, img) => {
   let element = event.target;
   element.classList.toggle('added');
- 
   let item = sliders.indexOf(img);
   if (item === -1) {
     sliders.push(img);
-  } 
+  }
+  else {
+    sliders.pop(img)
+  }
 }
 var timer
 const createSlider = () => {
@@ -84,23 +80,22 @@ const createSlider = () => {
   document.querySelector('.main').style.display = 'block';
   // hide image aria
   imagesArea.style.display = 'none';
-  
+
   const duration = document.getElementById('duration').value || 1000;
   sliders.forEach(slide => {
     let item = document.createElement('div')
     item.className = "slider-item";
     item.innerHTML = `<img class="w-100"
-    src="${slide}"
-    alt="">`;
+    src="${slide}" alt=""> `;
     sliderContainer.appendChild(item)
   })
   changeSlide(0)
   timer = setInterval(function () {
     slideIndex++;
     changeSlide(slideIndex);
-  }, duration);  
+  }, duration);
 }
- 
+
 // change slider index 
 const changeItem = index => {
   changeSlide(slideIndex += index);
@@ -137,12 +132,17 @@ searchBtn.addEventListener('click', function () {
 })
 
 sliderBtn.addEventListener('click', function () {
-  if(parseInt(document.getElementById('duration').value) < 0 ) {
+  if (parseInt(document.getElementById('duration').value) < 0) {
     alert("Slider can't be this fast! Please choose another input")
     searchBtn.disabled = true;
     document.getElementById("duration").value = ''
   }
   else {
+    const countOfPictures = sliders.length
+    alert(`You selected ${countOfPictures} pictures.`)  
     createSlider()
   }
 })
+
+
+ 
