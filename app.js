@@ -13,6 +13,18 @@ let sliders = [];
 // to create your own api key
 const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 
+// show spinner until data is loaded
+const showSpinner = (show) => {
+  if(show) {
+    document.getElementById("spinner").classList.remove("d-none");
+    console.log("spinner should show now");
+  }
+  else {
+    document.getElementById("spinner").classList.add("d-none");
+    console.log("stoped");
+  }
+}
+
 // show images 
 const showImages = (images) => {
   imagesArea.style.display = 'block';
@@ -25,20 +37,19 @@ const showImages = (images) => {
     div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
     gallery.appendChild(div)
   })
-
+  showSpinner(false);
 }
 
 const getImages = (query) => {
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
-    .then(data => showImages(data.hits))
+    .then(data => console.log(data.hits))
     .catch(err => console.log(err))
 }
 
 // enter key acting as search-btn
 document.getElementById("search").addEventListener("keypress", function(e) {
   if(e.key === "Enter") {
-    console.log("yes");
     searchBtn.click()
   }
 })
@@ -73,14 +84,8 @@ const createSlider = () => {
   document.querySelector('.main').style.display = 'block';
   // hide image aria
   imagesArea.style.display = 'none';
-
-  let inputDuration = document.getElementById('duration').value;
-  console.log(inputDuration);
-  if(parseInt(inputDuration) < 500 ) {
-    alert("Slider can't be this fast! Please choose another input or the default value will be used")
-    inputDuration = null;
-  }
-  const duration = inputDuration || 1000;
+  
+  const duration = document.getElementById('duration').value || 1000;
   sliders.forEach(slide => {
     let item = document.createElement('div')
     item.className = "slider-item";
@@ -123,6 +128,7 @@ const changeSlide = (index) => {
 }
 
 searchBtn.addEventListener('click', function () {
+  showSpinner(true)
   document.querySelector('.main').style.display = 'none';
   clearInterval(timer);
   const search = document.getElementById('search');
@@ -131,5 +137,12 @@ searchBtn.addEventListener('click', function () {
 })
 
 sliderBtn.addEventListener('click', function () {
-  createSlider()
+  if(parseInt(document.getElementById('duration').value) < 0 ) {
+    alert("Slider can't be this fast! Please choose another input")
+    searchBtn.disabled = true;
+    document.getElementById("duration").value = ''
+  }
+  else {
+    createSlider()
+  }
 })
